@@ -31,6 +31,9 @@ public class MyLocationListener implements LocationListener {
 
         params.putDouble("longitude", location.getLongitude());
         params.putDouble("latitude", location.getLatitude());
+        params.putDouble("altitude", location.getAltitude());
+        params.putDouble("bearing", location.getBearing());
+        params.putDouble("speed", location.getSpeed());
 
         sendEvent("location_changed", params);
     }

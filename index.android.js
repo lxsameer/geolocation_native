@@ -27,6 +27,9 @@ var AwesomeProject = React.createClass({
       longitude: '-',
       latitude: '-',
       position: '-',
+      speed: '-',
+      bearing: '-',
+      altitude: '-',
     };
   },
 
@@ -42,6 +45,9 @@ var AwesomeProject = React.createClass({
     this.setState({
       longitude: x.longitude,
       latitude: x.latitude,
+      bearing: x.bearing,
+      speed: x.speed,
+      altitude: x.altitude,
     });
 
   },
@@ -75,6 +81,16 @@ var AwesomeProject = React.createClass({
         <Text style={styles.welcome}>
           Latitude: {this.state.latitude}
         </Text>
+        <Text style={styles.welcome}>
+          Altitude: {this.state.altitude}
+        </Text>
+        <Text style={styles.welcome}>
+          Speed: {this.state.speed}
+        </Text>
+        <Text style={styles.welcome}>
+          Bearing: {this.state.bearing}
+        </Text>
+
         <Text style={styles.welcome}>
           {this.state.position}
         </Text>
