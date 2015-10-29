@@ -5,58 +5,80 @@
 'use strict';
 
 var React = require('react-native');
+var AndroidLocation = require('./ReactLocation');
+
 var {
   AppRegistry,
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } = React;
 
 
-exports.framework = 'React';
-exports.title = 'Geolocation';
-exports.description = 'Examples of using the Geolocation API.';
-
-exports.examples = [
-  {
-    title: 'navigator.geolocation',
-    render: function(): ReactElement {
-      return <GeolocationExample />;
-    },
-  }
-];
-
 var AwesomeProject = React.createClass({
-    getInitialState: function() {
-        var that = this;
-        console.log(navigator.geolocation.getCurrentPosition);
-        navigator.geolocation.getCurrentPosition((initialPosition) => that.setState({initialPosition}));
-
-
+  getInitialState: function() {
     return {
-      initialPosition: 'unknown',
-      lastPosition: 'unknown',
+      position: '-'
     };
   },
 
-    render: function() {
+  success: function(position) {
+    console.log(position);
+    this.setState({position: 'I got it'});
+  },
 
-        var aaa = "sameer";
-        return (
-            <View style={styles.container}>
-            <Text style={styles.welcome}>
-            Welcome to React Native! {aaa}
-            {JSON.stringify(this.state.initialPosition)}
+  clicked: function() {
+    console.log('here');
+
+    AndroidLocation.getLocation(3000, 1,
+                                function(x){
+                                  console.log("success");
+                                  console.log(x);
+                                },
+                                function(x) {
+                                  console.log("disabled");
+                                  console.log(x);
+
+                                },
+                                function(x) {
+                                  console.log("enabled");
+                                  console.log(x);
+
+                                },
+                                function(x, y) {
+                                  console.log("changed");
+                                  console.log(x);
+                                  console.log(y);
+                                }
+                               );
+
+    this.setState({position: 'Hi'});
+  },
+
+  componentWillMount: function() {
+    console.log("init");
+  },
+
+  render: function() {
+
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Position: {this.state.position}
+        </Text>
+
+        <TouchableOpacity onPress={this.clicked}>
+          <View style={styles.position_button}>
+            <Text>
+              Get Position
             </Text>
-            <Text style={styles.instructions}>
-            To get started, edit index.android.js
-            </Text>
-            <Text style={styles.instructions}>
-            Shake or press menu button for dev menu
-            </Text>
-            </View>
-        );
-    }
+          </View>
+
+        </TouchableOpacity>
+      </View>
+    );
+  }
 });
 
 var styles = StyleSheet.create({
@@ -75,6 +97,11 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  position_button: {
+    backgroundColor: '#009dcc',
+    alignItems: 'center',
+    padding: 20,
   },
 });
 
