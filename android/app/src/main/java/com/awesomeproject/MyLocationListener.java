@@ -1,52 +1,77 @@
 package com.awesomeproject.location;
 
+import java.util.HashMap;
+
 import android.os.Bundle;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
-import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.Arguments;
 
 public class MyLocationListener implements LocationListener {
 
-    private Callback on_success;
-    private Callback on_disabled = null;
-    private Callback on_enabled = null;
-    private Callback on_changed = null;
+    private ReactContext reactContext;
+    private static final String TAG = "MyLocationlistener";
 
-    public MyLocationListener(Callback success,
-                              Callback disabled,
-                              Callback enabled,
-                              Callback changed) {
-        this.on_success = success;
-        this.on_disabled = disabled;
-        this.on_enabled = enabled;
-        this.on_changed = changed;
+    public MyLocationListener(ReactContext reactContext) {
+        this.reactContext = reactContext;
+
     }
 
     @Override
     public void onLocationChanged(final Location location) {
-        this.on_success.invoke(location);
+        Log.v(TAG, "OnLocationChanged");
+        WritableMap params = Arguments.createMap();
+
+        params.putDouble("longitude", location.getLongitude());
+        params.putDouble("latitude", location.getLatitude());
+
+        sendEvent("location_changed", params);
     }
 
+    @Override
     public void onProviderDisabled (String provider) {
-        if (this.on_disabled != null) {
-            this.on_disabled.invoke(provider);
-        }
+        Log.v(TAG, "onProviderDisabled");
+
+        WritableMap params = Arguments.createMap();
+
+        params.putString("provider", provider);
+
+        sendEvent("provider_disabled", params);
+
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
-        if (this.on_enabled != null) {
-            this.on_enabled.invoke(provider);
-        }
+        Log.v(TAG, "onProviderEnabled");
+        WritableMap params = Arguments.createMap();
 
+        params.putString("provider", provider);
+
+        sendEvent("provider_enabled", params);
     }
 
+    @Override
     public void onStatusChanged (String provider, int status, Bundle extras) {
-        if (this.on_changed != null) {
-            this.on_changed.invoke(provider, status);
-        }
+        Log.v(TAG, "onStatusChanged");
+        WritableMap params = Arguments.createMap();
+
+        params.putString("provider", provider);
+        params.putInt("status", status);
+
+        sendEvent("provider_status_changed", params);
 
     }
 
+    private void sendEvent(String eventName, @Nullable WritableMap params) {
+        this.reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
+    }
 }

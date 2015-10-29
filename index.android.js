@@ -5,6 +5,8 @@
 'use strict';
 
 var React = require('react-native');
+var Subscribable = require('Subscribable');
+
 var AndroidLocation = require('./ReactLocation');
 
 var {
@@ -13,61 +15,69 @@ var {
   Text,
   View,
   TouchableOpacity,
+  DeviceEventEmitter,
 } = React;
 
 
 var AwesomeProject = React.createClass({
+  mixins: [Subscribable.Mixin],
+
   getInitialState: function() {
     return {
-      position: '-'
+      longitude: '-',
+      latitude: '-',
+      position: '-',
     };
   },
 
-  success: function(position) {
-    console.log(position);
-    this.setState({position: 'I got it'});
-  },
 
   clicked: function() {
-    console.log('here');
+    AndroidLocation.getLocation(3000, 0);
+    this.setState({position: 'Clicked'});
+  },
 
-    AndroidLocation.getLocation(3000, 1,
-                                function(x){
-                                  console.log("success");
-                                  console.log(x);
-                                },
-                                function(x) {
-                                  console.log("disabled");
-                                  console.log(x);
 
-                                },
-                                function(x) {
-                                  console.log("enabled");
-                                  console.log(x);
+  location_changed: function(x) {
 
-                                },
-                                function(x, y) {
-                                  console.log("changed");
-                                  console.log(x);
-                                  console.log(y);
-                                }
-                               );
+    this.setState({
+      longitude: x.longitude,
+      latitude: x.latitude,
+    });
 
-    this.setState({position: 'Hi'});
+  },
+
+    provider_status_changed: function(x) {
+      this.setState({position: 'Status changed'});
+
   },
 
   componentWillMount: function() {
     console.log("init");
+
+    this.addListenerOn(DeviceEventEmitter,
+                       "location_changed",
+                       this.location_changed);
+
+    this.addListenerOn(DeviceEventEmitter,
+                       "provider_status_changed",
+                       this.provider_status_changed);
+
   },
+
 
   render: function() {
 
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Position: {this.state.position}
+          Longitude: {this.state.longitude}
         </Text>
-
+        <Text style={styles.welcome}>
+          Latitude: {this.state.latitude}
+        </Text>
+        <Text style={styles.welcome}>
+          {this.state.position}
+        </Text>
         <TouchableOpacity onPress={this.clicked}>
           <View style={styles.position_button}>
             <Text>

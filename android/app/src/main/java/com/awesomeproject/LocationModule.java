@@ -25,15 +25,13 @@ public class LocationModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void getLocation(Integer interval, Float distance,
-                            Callback success, Callback disabled,
-                            Callback enabled, Callback changed) {
+    public void getLocation(Integer interval, Float distance) {
 
-        MyLocationListener mLocationListener = new MyLocationListener(success, disabled, enabled, changed);
+        MyLocationListener mLocationListener = new MyLocationListener(this.getReactApplicationContext());
 
         LocationManager mLocationManager = (LocationManager) this.getReactApplicationContext().getSystemService(this.getReactApplicationContext().LOCATION_SERVICE);
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                                                 interval,
                                                 distance,
                                                 mLocationListener);
