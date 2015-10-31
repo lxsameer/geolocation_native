@@ -12,6 +12,7 @@ import Subscribable from 'Subscribable';
 import  WS from 'ws';
 
 var AndroidLocation = require('./ReactLocation');
+var ToolbarAndroid = require('ToolbarAndroid');
 
 var {
   AppRegistry,
@@ -21,6 +22,7 @@ var {
   TextInput,
   TouchableOpacity,
   DeviceEventEmitter,
+//  ToolbarAndroid,
 } = React;
 
 
@@ -100,10 +102,18 @@ var AwesomeProject = React.createClass({
 
   },
 
+  onActionSelected: function(position) {
+    if (position === 0) {
+      //showSettings();
+    }
+  },
+
   render: function() {
 
     return (
       <View>
+      <ToolbarAndroid title="AwesomeApp" />
+
       <View style={styles.topNav}>
         <TextInput style={styles.nameInput} value={this.state.name} />
         <Text style={styles.startButton} onPress={this.start}>
