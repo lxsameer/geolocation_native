@@ -4,8 +4,12 @@
  */
 'use strict';
 
-var React = require('react-native');
-var Subscribable = require('Subscribable');
+//var React        = require('react-native');
+import React from 'react-native';
+
+//var Subscribable = require('Subscribable');
+import Subscribable from 'Subscribable';
+import  WS from 'ws';
 
 var AndroidLocation = require('./ReactLocation');
 
@@ -14,6 +18,7 @@ var {
   StyleSheet,
   Text,
   View,
+  TextInput,
   TouchableOpacity,
   DeviceEventEmitter,
 } = React;
@@ -50,6 +55,8 @@ var AwesomeProject = React.createClass({
       altitude: x.altitude,
     });
 
+    console.log('Sending latitude');
+    this.ws.send('latitude: ' + x.latitude);
   },
 
     provider_status_changed: function(x) {
@@ -59,6 +66,29 @@ var AwesomeProject = React.createClass({
 
   componentWillMount: function() {
     console.log("init");
+  },
+
+  componentDidMount: function() {
+    console.log("Component did mount.");
+    var that = this;
+
+    this.ws = new WS('ws://192.168.1.31:4000/');
+
+    this.ws.addEventListener('open', function() {
+      console.log('sent');
+      that.setState({position: 'sent'});
+      that.ws.send('something');
+    });
+
+    this.ws.addEventListener('message', function(e) {
+      // a message was received
+      console.log(e.data);
+    });
+
+    this.ws.addEventListener('close', function(e) {
+      // connection closed
+      console.log(e.code, e.reason);
+    });
 
     this.addListenerOn(DeviceEventEmitter,
                        "location_changed",
@@ -70,10 +100,16 @@ var AwesomeProject = React.createClass({
 
   },
 
-
   render: function() {
 
     return (
+      <View>
+      <View style={styles.topNav}>
+        <TextInput style={styles.nameInput} value={this.state.name} />
+        <Text style={styles.startButton} onPress={this.start}>
+          Start
+        </Text>
+      </View>
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Longitude: {this.state.longitude}
@@ -103,11 +139,30 @@ var AwesomeProject = React.createClass({
 
         </TouchableOpacity>
       </View>
+      </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
+  topNav: {
+    flex: 1,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+
+  },
+  nameInput: {
+    flex: 1,
+    //alignItems: 'flex-start',
+  },
+  startButton: {
+    flex: 0.25,
+    //alignItems: 'flex-end',
+    padding: 10,
+    backgroundColor: '#009dcc',
+    color: '#ffffff',
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',
