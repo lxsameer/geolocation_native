@@ -1,28 +1,20 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
-//var React        = require('react-native');
 import React from 'react-native';
-
-//var Subscribable = require('Subscribable');
 import Subscribable from 'Subscribable';
-import  WS from 'ws';
-
-var AndroidLocation = require('./ReactLocation');
-var ToolbarAndroid = require('ToolbarAndroid');
+import WS from 'ws';
+import AndroidLocation from './ReactLocation';
+import ToolbarAndroid from 'ToolbarAndroid';
 
 var {
   AppRegistry,
   StyleSheet,
   Text,
   View,
+  ListView,
   TextInput,
   TouchableOpacity,
   DeviceEventEmitter,
-//  ToolbarAndroid,
 } = React;
 
 
@@ -31,41 +23,43 @@ var AwesomeProject = React.createClass({
 
   getInitialState: function() {
     return {
+      name: "",
+      started: false,
+      nearby_users: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
       longitude: '-',
       latitude: '-',
-      position: '-',
-      speed: '-',
-      bearing: '-',
-      altitude: '-',
     };
   },
 
 
   clicked: function() {
-    AndroidLocation.getLocation(3000, 0);
-    this.setState({position: 'Clicked'});
+    AndroidLocation.getLocation(2000, 0);
+    this.setState({started: true});
   },
 
 
   location_changed: function(x) {
-
     this.setState({
       longitude: x.longitude,
       latitude: x.latitude,
-      bearing: x.bearing,
-      speed: x.speed,
-      altitude: x.altitude,
     });
 
     console.log('Sending latitude');
-    this.ws.send('latitude: ' + x.latitude);
+    packet = { command: 'my-position',
+               latitude: x.latitude,
+               longitude: x.longitude,
+               user: this.state.name };
+
+    data = JSON.stringify(packet);
+    console.log(data);
+    this.ws.send(data);
   },
 
-    provider_status_changed: function(x) {
-      this.setState({position: 'Status changed'});
-
+  provider_status_changed: function(x) {
+    console.log('prodiver state changed');
   },
-
   componentWillMount: function() {
     console.log("init");
   },
@@ -74,12 +68,10 @@ var AwesomeProject = React.createClass({
     console.log("Component did mount.");
     var that = this;
 
-    this.ws = new WS('ws://192.168.1.31:4000/');
+    this.ws = new WS('ws://localhost:4000/');
 
     this.ws.addEventListener('open', function() {
       console.log('sent');
-      that.setState({position: 'sent'});
-      that.ws.send('something');
     });
 
     this.ws.addEventListener('message', function(e) {
@@ -102,82 +94,66 @@ var AwesomeProject = React.createClass({
 
   },
 
-  onActionSelected: function(position) {
-    if (position === 0) {
-      //showSettings();
-    }
-  },
-
-  render: function() {
-
+  renderInputScreen: function() {
     return (
-      <View>
-      <ToolbarAndroid title="AwesomeApp" />
-
-      <View style={styles.topNav}>
-        <TextInput style={styles.nameInput} value={this.state.name} />
-        <Text style={styles.startButton} onPress={this.start}>
-          Start
-        </Text>
-      </View>
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Longitude: {this.state.longitude}
-        </Text>
-        <Text style={styles.welcome}>
-          Latitude: {this.state.latitude}
-        </Text>
-        <Text style={styles.welcome}>
-          Altitude: {this.state.altitude}
-        </Text>
-        <Text style={styles.welcome}>
-          Speed: {this.state.speed}
-        </Text>
-        <Text style={styles.welcome}>
-          Bearing: {this.state.bearing}
-        </Text>
+        <View>
+          <TextInput placeholder="Email" style={styles.nameInput} onChangeText={(text) => this.setState({name: text})}  />
+        </View>
 
-        <Text style={styles.welcome}>
-          {this.state.position}
-        </Text>
         <TouchableOpacity onPress={this.clicked}>
           <View style={styles.position_button}>
             <Text>
-              Get Position
+              Start
             </Text>
           </View>
 
         </TouchableOpacity>
       </View>
+  )},
+
+  renderUser: function() {
+    return (
+      <View style={styles.container}>
+        <View>
+          <Text></Text>
+        </View>
       </View>
     );
+  },
+  renderList: function() {
+    return (
+      <View>
+        <ListView dataSource={this.state.nearby_users}
+                  renderRow={this.renderUser}
+                  style={styles.listView} />
+
+      </View>
+    )
+  },
+
+  render: function() {
+
+    if (this.state.started) {
+      return this.renderList();
+    }
+    else {
+      return this.renderInputScreen();
+    }
   }
 });
 
 var styles = StyleSheet.create({
-  topNav: {
-    flex: 1,
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-
-  },
   nameInput: {
-    flex: 1,
+    flex: 0.2,
     //alignItems: 'flex-start',
-  },
-  startButton: {
-    flex: 0.25,
-    //alignItems: 'flex-end',
-    padding: 10,
-    backgroundColor: '#009dcc',
-    color: '#ffffff',
   },
 
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+
   },
   welcome: {
     fontSize: 20,
@@ -192,6 +168,7 @@ var styles = StyleSheet.create({
   position_button: {
     backgroundColor: '#009dcc',
     alignItems: 'center',
+    flex: 0.2,
     padding: 20,
   },
 });
