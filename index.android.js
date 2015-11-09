@@ -68,14 +68,19 @@ var AwesomeProject = React.createClass({
     console.log("Component did mount.");
     var that = this;
 
-    this.ws = new WS('ws://localhost:4000/');
+    this.ws = new WS('ws://192.168.1.7:4000/');
 
     this.ws.addEventListener('open', function() {
       console.log('sent');
     });
 
+    this.ws.addEventListener('error', function(data) {
+      console.log('error');
+      console.log(data);
+    });
+
     this.ws.addEventListener('message', function(e) {
-      // a message was received
+      console.log('rec: --------');
       console.log(e.data);
     });
 
