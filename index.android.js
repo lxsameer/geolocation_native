@@ -17,7 +17,6 @@ var {
   DeviceEventEmitter,
 } = React;
 
-
 var AwesomeProject = React.createClass({
   mixins: [Subscribable.Mixin],
 
@@ -30,6 +29,10 @@ var AwesomeProject = React.createClass({
       }),
       longitude: '-',
       latitude: '-',
+      mapRegion: null,
+      mapRegionInput: null,
+      annotations: null,
+      isFirstLoad: true,
     };
   },
 
@@ -120,18 +123,17 @@ var AwesomeProject = React.createClass({
   renderUser: function() {
     return (
       <View style={styles.container}>
-        <View>
-          <Text></Text>
-        </View>
       </View>
     );
   },
+
   renderList: function() {
     return (
       <View>
-        <ListView dataSource={this.state.nearby_users}
-                  renderRow={this.renderUser}
-                  style={styles.listView} />
+        <MapView style={styles.map}
+          region={this.state.mapRegion || undefined}
+          annotations={this.state.annotations || undefined}
+        />
 
       </View>
     )
@@ -149,9 +151,16 @@ var AwesomeProject = React.createClass({
 });
 
 var styles = StyleSheet.create({
+
   nameInput: {
     flex: 0.2,
     //alignItems: 'flex-start',
+  },
+  map: {
+    height: 150,
+    margin: 10,
+    borderWidth: 1,
+    borderColor: '#000000',
   },
 
   container: {
