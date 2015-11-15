@@ -85,6 +85,10 @@ var AwesomeProject = React.createClass({
     this.ws.addEventListener('message', function(e) {
       console.log('rec: --------');
       console.log(e.data);
+      console.log(that.state);
+      that.setState({
+        nearby_users: that.state.nearby_users.cloneWithRows(e.data),
+      });
     });
 
     this.ws.addEventListener('close', function(e) {
@@ -120,9 +124,12 @@ var AwesomeProject = React.createClass({
       </View>
   )},
 
-  renderUser: function() {
+  renderUser: function(rowData) {
     return (
-      <View style={styles.container}>
+      <View>
+        <Text>
+          {rowData}
+        </Text>
       </View>
     );
   },
@@ -130,11 +137,9 @@ var AwesomeProject = React.createClass({
   renderList: function() {
     return (
       <View>
-        <MapView style={styles.map}
-          region={this.state.mapRegion || undefined}
-          annotations={this.state.annotations || undefined}
-        />
-
+      <ListView
+          dataSource={this.state.nearby_users}
+          renderRow={this.renderUser} />
       </View>
     )
   },
