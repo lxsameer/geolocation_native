@@ -154,7 +154,7 @@ var AwesomeProject = React.createClass({
             {rowData[4]}
           </Text>
           <Text style={styles.location}>
-            {rowData[1]} - {rowData[2]}
+            {rowData[1]} | {rowData[1]} - {rowData[2]}
           </Text>
         </View>
       </View>
