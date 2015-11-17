@@ -11,6 +11,7 @@ var {
   StyleSheet,
   Text,
   View,
+  Image,
   ListView,
   TextInput,
   TouchableOpacity,
@@ -85,9 +86,12 @@ var AwesomeProject = React.createClass({
     this.ws.addEventListener('message', function(e) {
       console.log('rec: --------');
       console.log(e.data);
-      console.log(that.state);
+
+      var users = JSON.parse(e.data);
+      console.log(users);
+
       that.setState({
-        nearby_users: that.state.nearby_users.cloneWithRows(e.data),
+        nearby_users: that.state.nearby_users.cloneWithRows(users),
       });
     });
 
@@ -124,12 +128,23 @@ var AwesomeProject = React.createClass({
       </View>
   )},
 
-  renderUser: function(rowData) {
+  renderUser: function(rowData, a, b) {
+    console.log("#####");
+    console.log(rowData);
+
     return (
       <View>
-        <Text>
-          {rowData}
-        </Text>
+        <View>
+          <Image source={{uri: 'http://www.gravatar.com/avatar/' + rowData[5]}} />
+        </View>
+        <View>
+          <Text>
+            {rowData[4]}
+          </Text>
+          <Text>
+            {rowData[1]} - {rowData[2]}
+          </Text>
+        </View>
       </View>
     );
   },
