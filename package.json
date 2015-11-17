@@ -8,6 +8,7 @@
   "dependencies": {
     "react-native": "*",
     "react-native-geolocation-android": "^0.3.0",
+    "react-native-vector-icons": "^0.8.5",
     "subscribable": "^0.4.0",
     "ws": "^0.8.0"
   }

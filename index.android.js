@@ -5,6 +5,7 @@ import Subscribable from 'Subscribable';
 import WS from 'ws';
 import AndroidLocation from './ReactLocation';
 import ToolbarAndroid from 'ToolbarAndroid';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 var {
   AppRegistry,
@@ -17,6 +18,12 @@ var {
   TouchableOpacity,
   DeviceEventEmitter,
 } = React;
+
+var toolbarActions = [
+  {title: 'Create', },
+  {title: 'Filter'},
+  {title: 'Settings'},
+];
 
 var AwesomeProject = React.createClass({
   mixins: [Subscribable.Mixin],
@@ -112,19 +119,23 @@ var AwesomeProject = React.createClass({
 
   renderInputScreen: function() {
     return (
+      <View>
+      <ToolbarAndroid title="ProjectAlpha" style={styles.toolbar}
+                      actions={toolbarActions}
+                      navIcon={require('./loogo.png')}
+                      titleColor="#ffffff"
+                      onActionSelected={this.onActionSelected} />
+
       <View style={styles.container}>
         <View>
           <TextInput placeholder="Email" style={styles.nameInput} onChangeText={(text) => this.setState({name: text})}  />
         </View>
 
-        <TouchableOpacity onPress={this.clicked}>
-          <View style={styles.position_button}>
-            <Text>
-              Start
-            </Text>
-          </View>
+          <Icon.Button name="play" backgroundColor="#BF0C43" onPress={this.clicked}>
+            Start
+          </Icon.Button>
 
-        </TouchableOpacity>
+      </View>
       </View>
   )},
 
@@ -150,10 +161,21 @@ var AwesomeProject = React.createClass({
     );
   },
 
+  onActionSelected: function(position) {
+    if (position === 0) {
+      //
+    }
+  },
   renderList: function() {
     return (
       <View>
-      <ListView
+        <ToolbarAndroid title="ProjectAlpha" style={styles.toolbar}
+                        actions={toolbarActions}
+                        navIcon={require('./loogo.png')}
+                        titleColor="#ffffff"
+                        onActionSelected={this.onActionSelected} />
+
+        <ListView
           dataSource={this.state.nearby_users}
           renderRow={this.renderUser} />
       </View>
@@ -186,6 +208,13 @@ var styles = StyleSheet.create({
   details: {
     flex: 1,
     paddingLeft: 5,
+  },
+  toolbar: {
+    backgroundColor: '#e9eaed',
+    height: 56,
+    backgroundColor: '#8EAC00',
+
+
   },
   avatar: {
     width: 60,
@@ -228,7 +257,7 @@ var styles = StyleSheet.create({
     marginBottom: 5,
   },
   position_button: {
-    backgroundColor: '#009dcc',
+    backgroundColor: '#8EAC00',
     alignItems: 'center',
     flex: 0.2,
     padding: 20,
