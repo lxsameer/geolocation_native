@@ -133,15 +133,16 @@ var AwesomeProject = React.createClass({
     console.log(rowData);
 
     return (
-      <View>
-        <View>
-          <Image source={{uri: 'http://www.gravatar.com/avatar/' + rowData[5]}} />
+      <View style={styles.row}>
+        <View style={styles.avatar_container}>
+          <Image style={styles.avatar}
+                 source={{uri: 'http://www.gravatar.com/avatar/' + rowData[5]}} />
         </View>
-        <View>
-          <Text>
+        <View style={styles.details}>
+          <Text style={styles.username}>
             {rowData[4]}
           </Text>
-          <Text>
+          <Text style={styles.location}>
             {rowData[1]} - {rowData[2]}
           </Text>
         </View>
@@ -171,7 +172,34 @@ var AwesomeProject = React.createClass({
 });
 
 var styles = StyleSheet.create({
-
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  avatar_container: {
+    //flex: 0.2;
+    padding: 5,
+  },
+  details: {
+    flex: 1,
+    paddingLeft: 5,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 100,
+  },
+  username: {
+    fontSize: 20,
+    marginBottom: 8,
+  },
+  location: {
+    fontSize: 14,
+    color: '#bebebe',
+  },
   nameInput: {
     flex: 0.2,
     //alignItems: 'flex-start',
