@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 var {
   AppRegistry,
   StyleSheet,
+  ScrollView,
   Text,
   View,
   Image,
@@ -119,23 +120,36 @@ var AwesomeProject = React.createClass({
 
   renderInputScreen: function() {
     return (
-      <View>
-      <ToolbarAndroid title="ProjectAlpha" style={styles.toolbar}
-                      actions={toolbarActions}
-                      navIcon={require('./loogo.png')}
-                      titleColor="#ffffff"
-                      onActionSelected={this.onActionSelected} />
+      <View style={{flex: 1}}>
+        <Image source={require('./background.jpg')} resizeMode="cover" style={styles.backgroundImage} />
+        <ToolbarAndroid title="ProjectAlpha" style={styles.toolbar}
+                        actions={toolbarActions}
+                        navIcon={require('./loogo.png')}
+                        titleColor="#ffffff"
+                        onActionSelected={this.onActionSelected} />
 
-      <View style={styles.container}>
-        <View>
-          <TextInput placeholder="Email" style={styles.nameInput} onChangeText={(text) => this.setState({name: text})}  />
+        <View style={styles.container}>
+
+          <Text style={styles.header1}>
+            Project Alpha
+          </Text>
+
+          <Text style={styles.header2}>
+            Demo Application
+          </Text>
+
         </View>
 
-          <Icon.Button name="play" backgroundColor="#BF0C43" onPress={this.clicked}>
-            Start
-          </Icon.Button>
+        <View style={styles.signin_container}>
+          <TextInput placeholder="Email . . ." placeholderTextColor="#9f9f9f" keyboardType="email-address" style={styles.nameInput} onChangeText={(text) => this.setState({name: text})}  />
 
-      </View>
+          <TouchableOpacity  onPress={this.clicked} style={styles.signin}>
+            <View style={{flex: 1, alignItem: 'center', alignSelf: 'center', justifyContent: 'center'}}>
+                <Icon name="sign-in" size={30} color="#ffffff" />
+            </View>
+          </TouchableOpacity>
+
+        </View>
       </View>
   )},
 
@@ -153,8 +167,11 @@ var AwesomeProject = React.createClass({
           <Text style={styles.username}>
             {rowData[4]}
           </Text>
+          <Text style={{color: '#F59D92'}}>
+            {rowData[1]}
+          </Text>
           <Text style={styles.location}>
-            {rowData[1]} | {rowData[1]} - {rowData[2]}
+             {rowData[2]} - {rowData[3]}
           </Text>
         </View>
       </View>
@@ -168,16 +185,17 @@ var AwesomeProject = React.createClass({
   },
   renderList: function() {
     return (
-      <View>
+      <View style={{flex: 1}}>
         <ToolbarAndroid title="ProjectAlpha" style={styles.toolbar}
                         actions={toolbarActions}
                         navIcon={require('./loogo.png')}
                         titleColor="#ffffff"
                         onActionSelected={this.onActionSelected} />
+        <ScrollView style={{flex: 1}}>
 
-        <ListView
-          dataSource={this.state.nearby_users}
-          renderRow={this.renderUser} />
+          <ListView dataSource={this.state.nearby_users}
+                    renderRow={this.renderUser} />
+        </ScrollView>
       </View>
     )
   },
@@ -210,7 +228,7 @@ var styles = StyleSheet.create({
     paddingLeft: 5,
   },
   toolbar: {
-    backgroundColor: '#e9eaed',
+
     height: 56,
     backgroundColor: '#8EAC00',
 
@@ -229,10 +247,6 @@ var styles = StyleSheet.create({
     fontSize: 14,
     color: '#bebebe',
   },
-  nameInput: {
-    flex: 0.2,
-    //alignItems: 'flex-start',
-  },
   map: {
     height: 150,
     margin: 10,
@@ -240,12 +254,6 @@ var styles = StyleSheet.create({
     borderColor: '#000000',
   },
 
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-
-  },
   welcome: {
     fontSize: 20,
     textAlign: 'center',
@@ -262,6 +270,65 @@ var styles = StyleSheet.create({
     flex: 0.2,
     padding: 20,
   },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // or 'stretch'
+    //resizeMode: 'contain',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    width: null,
+    height: null,
+  },
+
+  header1: {
+    fontSize: 40,
+    color: '#ffffff',
+    fontWeight: "900",
+    marginTop: 50,
+  },
+  header2: {
+    fontSize: 16,
+    color: '#d2d2d2',
+    fontWeight: "400",
+
+  },
+
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    //alignSelf: 'stretch',
+
+  },
+  signin_container: {
+    flex: 0,
+    //justifyContent: 'center',
+    alignItems: 'center',
+    //alignSelf: 'flex-end',
+    flexDirection: 'row',
+  },
+
+  nameInput: {
+    flex: 0.8,
+    color: '#2f2f2f',
+    backgroundColor: '#ffffff',
+    height: 50,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    //alignItems: 'flex-start',
+  },
+
+  signin: {
+    alignSelf: 'center',
+    flex: 0.2,
+    height: 50,
+    justifyContent: 'center',
+    backgroundColor: "#BF0C43",
+  }
+
 });
 
 AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
